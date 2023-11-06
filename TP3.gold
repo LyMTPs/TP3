@@ -1,0 +1,196 @@
+using gold.**
+procedure main(args:String[]) 
+begin
+  Estados := {"q0",  "C0","f1","f2", "sp", "r1","r2","r3","r4","r5","r6","r7","r8","r9",
+  				"r10","r11","v1","v2","dp","dp1","t0", "t1", "t2", "t3", "t4", "t5", "t6",
+  				"t7", "t8", "t9", "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17", 
+  				"t18", "t19", "t20", "t21", "t22", "t23", "t24", "t25", "t26", "t27", "t28", 
+  				"t29", "t30", "t31", "t32", "t33"}  
+  Alfabeto := {'f', 'r', 'l','b','u','d','c','a','m','a', 'w', 'n','i', 'e', '[', ']','t','z',':'}
+  AlfPila :={'V','W','X','Y','Z','A','B','C'}  
+  inicio := "q0"
+  fin := {"q0"}
+
+  P := GPushdownAutomaton(Estados, Alfabeto,AlfPila,inicio,fin)
+  
+  P.delta("q0","C0",λ).ignore()
+  
+  // Forward - f
+  P.delta("C0","f1",'f').push("X") 
+  P.delta("f1","f2",'n').pop("X")  
+  P.delta("f2","q0",λ).ignore()
+
+  // Right - r 
+  P.delta("C0","f1",'r').push("X") 
+ 
+  // Left - l 
+  P.delta("C0","f1",'l').push("X") 
+  
+  // back- b
+  P.delta("C0","f1",'b').push("X") 
+  
+  // penup - u
+  P.delta("C0","sp",'u').ignore()
+  P.delta("sp","q0",λ).ignore()
+  
+  // pendown - d
+  P.delta("C0","sp",'d').ignore()
+  
+  // clearscreen - c
+  P.delta("C0","sp",'c').ignore()
+  
+  // arc - a
+  P.delta("C0","dp",'a').push("XY")
+  P.delta("dp","dp1",'w').pop("X")
+  P.delta("dp1","f2",'n').pop("Y")
+  
+  // Make - m
+  P.delta("q0","v1",'m').push("XY")
+  P.delta("v1","v2",'i').pop("X") 
+  P.delta("v2","f2",'n').pop("Y")
+
+  // Repeat - e  
+  P.delta("q0","r1",'e').push("ABC")
+  P.delta("r1","r2",'n').pop("C")
+  P.delta("r2","r3",'[').pop("B")
+  
+  // repeat forward -f
+  P.delta("r3","r5",'f').push("X")
+  P.delta("r5","r6",'n').pop("X") 
+  P.delta("r6","r3",λ).ignore()
+  // repeat right -r
+  P.delta("r3","r5",'r').push("X")
+  // repeat left - l
+  P.delta("r3","r5",'l').push("X")
+  // repeat back - b
+  P.delta("r3","r5",'b').push("X")
+  //repeat penup - u
+  P.delta("r3","r7",'u').ignore()
+  P.delta("r7","r3",λ).ignore()
+  //repeat clearscreen - c
+  P.delta("r3","r7",'c').ignore()
+  // repeat pendown - d
+  P.delta("r3","r7",'d').ignore()
+  // repeat arc - a
+  P.delta("r3","r8",'a').push("XY")
+  P.delta("r8","r9",'w').pop("X")
+  P.delta("r9","r6",'n').pop("Y")
+  // repeat  Make - m
+  P.delta("r3","r10",'m').push("XY")
+  P.delta("r10","r11",'i').pop("X") 
+  P.delta("r11","r6",'n').pop("Y")
+  // repeat cierre
+  P.delta("r3","r4",']').pop("A")
+  P.delta("r4","q0",λ).ignore()
+  
+
+  // To - t
+  P.delta("q0","t0",'t').push("W")
+  P.delta("t0","t1",'i').ignore()
+  P.delta("t1","t4",λ).ignore()
+  // si hay variables 
+  P.delta("t1","t2",':').push("V")
+  P.delta("t2","t3",'i').pop("V")
+  P.delta("t3","t4",λ).ignore()
+  //forward
+  P.delta("t4","t5",'f').push("X")
+  P.delta("t5","t6",'n').pop("X") 
+  P.delta("t5","t24",':').push("V")
+  P.delta("t24","t6",'i').pop("V")
+  P.delta("t6","t4",λ).ignore()
+  // Right - r 
+  P.delta("t4","t5",'r').push("X") 
+ 
+  // Left - l 
+  P.delta("t4","t5",'l').push("X") 
+  
+  // back- b
+  P.delta("t4","t5",'b').push("X") 
+  
+  // penup - u
+  P.delta("t4","t7",'u').ignore()
+  P.delta("t7","t4",λ).ignore()
+  
+  // pendown - d
+  P.delta("t4","t7",'d').ignore()
+  
+  // clearscreen - c
+  P.delta("t4","t7",'c').ignore()
+  
+  // arc - a
+  P.delta("t4","t8",'a').push("XY")
+  P.delta("t8","t9",'w').pop("X")
+  P.delta("t8","t32",':').push("V")
+  P.delta("t32","t9",'i').pop("V")
+  P.delta("t9","t6",'n').pop("Y")
+  P.delta("t9","t33",':').push("V")
+  P.delta("t33","t6",'i').pop("V")
+  
+  // Make - m
+  P.delta("t4","t10",'m').push("XY")
+  P.delta("t10","t11",'i').pop("X") 
+  P.delta("t10","t30",':').push("V")
+  P.delta("t30","t11",'i').pop("V")
+  P.delta("t11","t6",'n').pop("Y")
+  P.delta("t11","t31",':').push("V")
+  P.delta("t31","t6",'i').pop("V")
+  
+  // Repeat - e  
+  P.delta("t4","t12",'e').push("ABC")
+  P.delta("t12","t13",'n').pop("C")
+  P.delta("t13","t15",':').ignore()
+  P.delta("t15","t13",'i').pop("C")
+  P.delta("t13","t14",'[').pop("B")
+  // repeat forward -f
+  P.delta("t14","t16",'f').push("X")
+  P.delta("t16","t17",'n').pop("X") 
+  P.delta("t16","t25",':').push("V")
+  P.delta("t25","t17",'i').pop("V")
+  P.delta("t17","t14",λ).ignore()
+  // repeat right -r
+  P.delta("t14","t16",'r').push("X")
+  // repeat left - l
+  P.delta("t14","t16",'l').push("X")
+  // repeat back - b
+  P.delta("t14","t16",'b').push("X")
+  //repeat penup - u
+  P.delta("t14","t18",'u').ignore()
+  P.delta("t18","t14",λ).ignore()
+  //repeat clearscreen - c
+  P.delta("t14","t18",'c').ignore()
+  // repeat pendown - d
+  P.delta("t14","t18",'d').ignore()
+  // repeat arc - a
+  P.delta("t14","t19",'a').push("XY")
+  P.delta("t19","t20",'w').pop("X")
+  P.delta("t19","t26",':').push("V")
+  P.delta("t26","t20",'i').pop("V")
+  P.delta("t20","t17",'n').pop("Y")
+  P.delta("t20","t27",':').push("V")
+  P.delta("t27","t17",'i').pop("V")
+  // repeat  Make - m
+  P.delta("t14","t21",'m').push("XY")
+  P.delta("t21","t22",'i').pop("X") 
+  P.delta("t21","t28",':').push("V")
+  P.delta("t28","t22",'i').pop("V")
+  P.delta("t22","t17",'n').pop("Y")
+  P.delta("t22","t29",':').push("V")
+  P.delta("t29","t17",'i').pop("V")
+  
+  
+  
+  // repeat cierre
+  P.delta("t14","t18",']').pop("A")
+  P.delta("t18","t23",λ).ignore()
+  
+  
+  
+  P.delta("t4","t23",λ).ignore()
+  P.delta("t23","q0",'z').pop("W")
+  
+  
+  
+  
+
+  GAutomataFrame.show(P)
+end
